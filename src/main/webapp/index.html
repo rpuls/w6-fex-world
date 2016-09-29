@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Start Page</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script>
+            $(document).ready(function () {
+                //GET COUNTRIES
+                $("#b1").on("click", function () {
+                    $.ajax({
+                        url: "api/country",
+                        type: "json",
+                        method: "GET"
+                    }).done(function (data) {
+                        var items = "";
+                        data.forEach(function (country) {
+                            //items += "<li>" + country.name + "</li>";
+                            items += "<tr><td>" + country.code + "</td><td>" + country.name + "</td><td>" + country.continent + "</td><td>" + country.capital + "</td></tr>";
+                        });
+                        //$("#countries").append(items);
+                        $("#ct").append(items);
+                    });
+                });
+                
+                //POPULATION
+                $("#b2").on("click", function () {
+                    $.ajax({
+                        url: "api/country/5000000",
+                        type: "json",
+                        method: "GET"
+                    }).done(function (data) {
+                        var items = "";
+                        data.forEach(function (country) {
+                            //items += "<li>" + country.name + "</li>";
+                            items += "<tr><td>" + country.name + "</td></tr>";
+                        });
+                        //$("#countries").append(items);
+                        $("#ct").append(items);
+                    });
+                });
+                
+            });
+        </script>
+    </head>
+    <body>
+        <h1>WORLD DATA</h1>
+        <button id="b1">get countries</button><button id="b2">get countries with population grater than:</button><input type="text" id="pop"/>
+        <ul id="countries"></ul>
+        <table id="ct"></table>
+    </body>
+</html>
