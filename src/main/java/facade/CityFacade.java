@@ -5,6 +5,7 @@
  */
 package facade;
 
+import entity.City;
 import entity.Country;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -15,11 +16,11 @@ import javax.persistence.Query;
  *
  * @author rasmus
  */
-public class CountryFacade {
-
+public class CityFacade {
+    
     EntityManagerFactory emf;
 
-    public CountryFacade(EntityManagerFactory emf) {
+    public CityFacade(EntityManagerFactory emf) {
         this.emf = emf;
     }
 
@@ -27,26 +28,30 @@ public class CountryFacade {
         return emf.createEntityManager();
     }
 
-    public List<Country> getCountries() {
+    //finder alle cities som hører til "cc" (country code i form af en string)
+    public List<City> getCitiesOfCountry(String cc) {
         EntityManager em = getEntityManager();
         try {
-            Query query = em.createQuery("select c from Country c");
-            List<Country> countries = query.getResultList();
-            return countries;
+            Query query = em.createQuery("SELECT c FROM City c WHERE c.CountryCode = :CountryCode");
+            query.setParameter("CountryCode", cc);
+            List<City> cities = query.getResultList();
+            return cities;
         } finally {
             em.close();
         }
     }
-
-    public List<Country> getCountriesByPop(int pop) {
+    
+    //ADD CITY - kræver at city objectet allerede har fået tildelt en "country code"
+    public City addCity(City c) {
         EntityManager em = getEntityManager();
-        try {
-            Query query = em.createQuery("SELECT c FROM Country c WHERE c.population > :population");
-            query.setParameter("population", pop);
-            List<Country> countries = query.getResultList();
-            return countries;
-        } finally {
+        try{
+            em.getTransaction().begin();
+            em.persist(c);
+            em.getTransaction().commit();
+            return c;
+        }finally{
             em.close();
         }
     }
+    
 }
